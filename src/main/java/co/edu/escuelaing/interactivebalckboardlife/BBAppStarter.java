@@ -19,8 +19,7 @@ public class BBAppStarter {
        
         SpringApplication app = new SpringApplication(BBAppStarter.class);
         
-        app.setDefaultProperties(Collections
-          .singletonMap("server.port", getPort()));
+        app.setDefaultProperties(Collections.singletonMap("server.port", getPort()));
         app.run(args);
     }
     
