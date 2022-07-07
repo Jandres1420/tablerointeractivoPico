@@ -3,7 +3,7 @@ function BBServiceURL() {
     var host = window.location.host;
     var url = 'wss://' + (host) + '/bbService';
     console.log("URL Calculada: " + url);
-    return "ws://localhost:8080/bbService";
+    return url;
 }
 
 
@@ -21,7 +21,7 @@ class WSBBChannel {
     onOpen(evt) {
         console.log("In onOpen", evt);
         fetch("/getTicket")
-           .then((res) => res.json())
+           .then((res) => res.text())
            .then((result) => this.wsocket.send(result));
     }
     onMessage(evt) {
