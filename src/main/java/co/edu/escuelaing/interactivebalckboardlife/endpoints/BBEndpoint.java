@@ -19,6 +19,8 @@ import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 import org.springframework.stereotype.Component;
 
+import co.edu.escuelaing.interactivebalckboardlife.entities.Ticket;
+
 
 @Component
 @ServerEndpoint("/bbService")
@@ -28,7 +30,7 @@ public class BBEndpoint {
     private static final Logger logger = Logger.getLogger(BBEndpoint.class.getName());
     /* Queue for all open WebSocket sessions */
     static Queue<Session> queue = new ConcurrentLinkedQueue<>();
-
+    private Boolean flag = false;
     Session ownSession = null;
 
     /* Call this method to send a message to all clients */
@@ -48,8 +50,23 @@ public class BBEndpoint {
 
     @OnMessage
     public void processPoint(String message, Session session) {
-        logger.log(Level.INFO, "Point received:" + message + ". From session: " + session);
-        this.send(message);
+        if(flag){
+            logger.log(Level.INFO, "Point received:" + message + ". From session: " + session);
+            this.send(message);
+        }else{
+            if(Ticket.getInstance().checkTicket(message)){
+                flag = true;
+            }else{
+                queue.remove(session);
+                try {
+                    session.close();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+        }
+        
     }
 
     @OnOpen
